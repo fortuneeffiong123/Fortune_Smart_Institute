@@ -1,0 +1,22 @@
+# Fortune Smart Institute Azure Deployment
+
+## Technologies
+- Azure App Service
+- ARM Template
+- HTML/CSS
+- Azure CLI
+
+## Deployment Workflow
+1. Create Resource Group
+2. Deploy ARM Template
+3. Create Staging Slot
+4. Zip Website
+5. Deploy to Staging
+6. Swap to Production
+
+## URLs
+Production:
+https://fortune-smart-main.azurewebsites.net
+
+Staging:
+https://fortune-smart-main-staging.azurewebsites.net
