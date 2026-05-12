@@ -1,0 +1,139 @@
+ Create Resource Group
+====================================
+az group create \
+  --name fortune-smart-rg \
+  --location westeurope
+
+Create ARM Template File
+=====================================
+nano appservice.json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+
+  "parameters": {
+    "webAppName": {
+      "type": "string",
+      "defaultValue": "fortune-smart-main"
+    },
+
+    "hostingPlanName": {
+      "type": "string",
+      "defaultValue": "fortune-smart-plan"
+    },
+
+    "location": {
+      "type": "string",
+      "defaultValue": "westeurope"
+    }
+  },
+
+  "resources": [
+
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2022-03-01",
+      "name": "[parameters('hostingPlanName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard"
+      },
+      "kind": "linux",
+      "properties": {
+        "reserved": true
+      }
+    },
+
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2022-03-01",
+      "name": "[parameters('webAppName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+      ],
+      "kind": "app,linux",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+        "siteConfig": {
+          "linuxFxVersion": "NODE|18-lts"
+        }
+      }
+    },
+
+    {
+      "type": "Microsoft.Web/sites/slots",
+      "apiVersion": "2022-03-01",
+      "name": "[concat(parameters('webAppName'), '/staging')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+      ],
+      "properties": {}
+    }
+  ]
+}
+
+Save the Template
+==================
+CTRL + O
+ENTER
+CTRL + X
+
+ Deploy ARM Template
+==========================
+az deployment group create \
+  --resource-group fortune-smart-rg \
+  --template-file appservice.json
+
+Create Staging Slot                                 // For testing Before Live
+=====================
+
+4. Zip Website
+======================
+zip -r site.zip 
+
+5. Deploy to Staging
+========================
+az webapp deployment source config-zip \
+  --resource-group fortune-smart-rg \
+  --name fortune-smart-main \
+  --slot staging \
+  --src site.zip
+
+Testing Stage Site
+=============================
+https://fortune-smart-main-staging.azurewebsites.net
+
+Swap Staging to Production
+============================
+az webapp deployment slot swap \
+  --resource-group fortune-smart-rg \
+  --name fortune-smart-main \
+  --slot staging \
+  --target-slot production
+
+Production Site
+=============================
+https://fortune-smart-main.azurewebsites.net
+
+Deploy SECOND WEBSITE (Emeka)                        //Create another ARM deployment OR another web app:
+==================================
+az webapp create \
+  --resource-group fortune-smart-rg \
+  --plan fortune-smart-plan \
+  --name emeka-smart-site \
+  --runtime "NODE|18-lts"
+
+Deploy Emeka Site
+cd ~/emeka-site
+zip -r emeka.zip .
+
+Deploy:
+=============
+
+az webapp deployment source config-zip \
+  --resource-group fortune-smart-rg \
+  --name emeka-smart-site \
+  --src emeka.zip
