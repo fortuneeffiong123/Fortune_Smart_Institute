@@ -1,0 +1,25 @@
+Deployment For The Template
+===========================
+az deployment group create \
+  --resource-group fortune_smart_institue \
+  --template-file appservice.json
+
+Deployment For Websites
+=============================
+az webapp up \
+  --resource-group fortune_smart_institue \
+  --name fortune-smart-institute-app \
+  --location westeurope \
+  --html
+====================================================
+https://fortune-smart-institute-app.azurewebsites.net
+=====================================================
+
+
+Slot Swap Command Deployment
+==============================
+az webapp deployment slot swap \
+  --resource-group fortune_smart_institue \
+  --name fortune-smart-institute-app \
+  --slot staging \
+  --target-slot production
