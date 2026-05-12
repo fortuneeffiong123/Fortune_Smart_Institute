@@ -1,0 +1,13 @@
+Developer
+   ↓
+Write Code
+   ↓
+ARM Template Creates Infrastructure
+   ↓
+Deploy to Staging
+   ↓
+Test
+   ↓
+Swap to Production
+   ↓
+Live Website
