@@ -1,11 +1,11 @@
-body {
+body {                                     //Styles the entire webpage.
   margin: 0;
   font-family: Arial, sans-serif;
   background: #0f2027;
   color: white;
 }
 
-/* HERO SECTION */
+/* HERO SECTION */                          //Styles the top welcome section of the website.
 .hero {
   height: 100vh;
   background: linear-gradient(135deg, #ff512f, #dd2476, #1e90ff);
